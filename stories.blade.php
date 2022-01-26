@@ -223,23 +223,31 @@
                         if (most_rated.length > 0){
 
                             $.map(most_rated, function(item, index){
-                                var html = "<div class=\"shadow-xss bg-white p-2 mr-2 ml-1 mb-2 story-line trigger_highlight\" hid='"+item.uuid+"'>\n" +
-                                    "<a class=\"dropdown-item p-0 change\" href=\"#\"><img src='http://writerstalkadmin.com/public/storage/"+item.file_image+"' class=\"viwed-images\">\n" +
-                                    "<h5 class=\"titalname pb-0 mb-0 mt-1 text-center\">"+item.title+"</h5></a>\n" +
-                                    "</div>";
+                                    let showUrl = '{{ route("userProfile", ":uuid") }}'.replace(':uuid', item.user_id);
+                                    $(".render_rated ").append(`
+                                    <div class="shadow-xss bg-white p-2 mr-2 ml-1 mb-2 story-line trigger_highlight" hid="${item.uuid}">
+                                            <a class="dropdown-item p-0 change" href="#">
+                                                <img src="${item.file_image ? '{{asset("storage")}}'+'/'+item.file_image: '{{asset("storage/assets/imgs/no_image.png")}}'}" class="viwed-images">
+                                            <h5 class="titalname pb-0 mb-0 mt-1 text-center">${item.title}</h5></a>
+                                            <figure class="avatar ms-auto me-auto mb-1 w-100 text-center">
+                                                <a href=${showUrl}><img src="${item.image_user ? '{{asset("storage")}}'+'/'+item.image_user: '{{asset("assets/imgs/user_avatar.png")}}'}" alt="image" class="h20 mt-1 rounded-circle w65 shadow-xss" title="${item.name_user}"></figure></a>
 
-                                $(".render_rated ").append(html);
+                                    </div>`);
                             })
                         }
                         if (most_viewed.length > 0){
 
                             $.map(most_viewed, function(item, index){
-                                var html = "<div class=\"shadow-xss bg-white p-2 mr-2 ml-1 mb-2 story-line trigger_highlight\" hid='"+item.uuid+"'>\n" +
-                                    "<a class=\"dropdown-item p-0 change\" href=\"#\"><img src='http://writerstalkadmin.com/public/storage/"+item.file_image+"' class=\"viwed-images\">\n" +
-                                    "<h5 class=\"titalname pb-0 mb-0 mt-1 text-center\">"+item.title+"</h5></a>\n" +
-                                    "</div>";
+                                let showUrl = '{{ route("userProfile", ":uuid") }}'.replace(':uuid', item.user_id);
+                                    $(".render_viewed ").append(`
+                                    <div class="shadow-xss bg-white p-2 mr-2 ml-1 mb-2 story-line trigger_highlight" hid="${item.uuid}">
+                                            <a class="dropdown-item p-0 change" href="#">
+                                                <img src="${item.file_image ? '{{asset("storage")}}'+'/'+item.file_image: '{{asset("storage/assets/imgs/no_image.png")}}'}" class="viwed-images">
+                                            <h5 class="titalname pb-0 mb-0 mt-1 text-center">${item.title}</h5></a>
+                                            <figure class="avatar ms-auto me-auto mb-1 w-100 text-center">
+                                                <a href=${showUrl}><img src="${item.image_user ? '{{asset("storage")}}'+'/'+item.image_user: '{{asset("assets/imgs/user_avatar.png")}}'}" alt="image" class="h20 mt-1 rounded-circle w65 shadow-xss" title="${item.name_user}"></figure></a>
 
-                                $(".render_viewed").append(html);
+                                    </div>`);
                             })
                         }
                     }
@@ -261,15 +269,22 @@
                     if (data.success == true){
                         $(".render_highlights").html('');
                         var highlights_arr = data.data;
+
                         if (highlights_arr.length > 0){
 
                             $.map(highlights_arr, function(item, index){
-                                var html = "<div class=\"shadow-xss bg-white p-2 mr-2 ml-1 mb-2 story-line trigger_highlight\" hid='"+item.uuid+"'>\n" +
-                                    "<a class=\"dropdown-item p-0 change\" href=\"#\"><img src='http://writerstalkadmin.com/public/storage/"+item.file_image+"' class=\"viwed-images\">\n" +
-                                    "<h5 class=\"titalname pb-0 mb-0 mt-1 text-center\">"+item.title+"</h5></a>\n" +
-                                    "</div>";
+                                let showUrl = '{{ route("userProfile", ":uuid") }}'.replace(':uuid', item.user_id);
+                                let user_img =  item.image_user ? '{{asset("storage")}}'+'/'+item.image_user: '{{asset("assets/imgs/user_avatar.png")}}';
+                                console.log(user_img, item.user_id)
+                                $(".render_highlights ").append(`
+                                    <div class="shadow-xss bg-white p-2 mr-2 ml-1 mb-2 story-line trigger_highlight" hid="${item.uuid}">
+                                            <a class="dropdown-item p-0 change" href="#">
+                                                <img src="${item.file_image ? '{{asset("storage")}}'+'/'+item.file_image: '{{asset("storage/assets/imgs/no_image.png")}}'}" class="viwed-images">
+                                            <h5 class="titalname pb-0 mb-0 mt-1 text-center">${item.title}</h5></a>
+                                            <figure class="avatar ms-auto me-auto mb-1 w-100 text-center">
+                                                <a href=${showUrl}><img src="${user_img}" alt="image" class="h20 mt-1 rounded-circle w65 shadow-xss" title="${item.name_user}"></figure></a>
 
-                                $(".render_highlights").append(html);
+                                    </div>`);
                             })
                         }
                     }
@@ -289,8 +304,6 @@
 
             var hid = $("#highlight_id").val();
             var _token   = $('meta[name="csrf-token"]').attr('content');
-            console.log(">>>>");
-            console.log(hid);
             $.ajax({
                 type: 'POST',
                 url: '/get_highlight_data',
@@ -301,40 +314,38 @@
                 dataType: 'json',
                 success: function (data) {
                     if (data.success == true){
-
                         $('#highlight_modal').modal('show')
                         var highlight_data = data.data;
+
                         $("#highlight_id").val(highlight_data.uuid)
-                        $("#highlight_image_anc").attr('href','http://writerstalkadmin.com/public/storage/'+highlight_data.file)
-                        $("#highlight_image_anc").find('img').attr('src',"http://writerstalkadmin.com/public/storage/"+highlight_data.file_image)
+                        $("#highlight_image_anc").attr('href',highlight_data.file ? '{{asset("storage")}}'+'/' + highlight_data.file : "javascript:void(0)" )
+                        $("#highlight_image_anc").find('img').attr('src', highlight_data.file_image ? '{{asset("storage")}}'+'/' + highlight_data.file_image : '{{asset("assets/imgs/img-bg.png")}}')
+
                         $(".display_praise_comments").html('')
                         $(".display_critique_comments").html('')
                         if (highlight_data.praise_comments.length > 0){
                             $.map(highlight_data.praise_comments, function(item, index){
-                                var praise_html = "<div class=\"media\"> <img class=\"mr-3 single-user-name\" src='http://writerstalkadmin.com/public/storage/"+item.user.image+"' alt=\"Generic placeholder image\">\n" +
-                                    "                                                    <div class=\"media-body mt-1 text-left\">\n" +
-                                    "                                                        <h5 class=\"mt-0 main-name\">"+item.user.name+"</h5>\n" +
-                                    "                                                        <p class=\"review\">"+item.comment+"</p>\n" +
-                                    "                                                        <div class=\"time last-seen\">"+item.comment_created_at_formatted+"</div>\n" +
-                                    "                                                    </div>\n" +
-                                    "                                                </div>";
+                                $(".display_praise_comments").append(`
+                                        <div class="media"> <img class="mr-3 single-user-name" src="${item.user.image ? '{{asset("storage")}}'+'/' +item.user.image: '{{asset("assets/imgs/user_avatar.png")}}'}" alt="Generic placeholder image">
+                                            <div class="media-body mt-1 text-left">
+                                                <h5 class="mt-0 main-name">${item.user.name}</h5>
+                                                <p class="review">${item.comment}</p>
+                                                <div class="time last-seen">${item.comment_created_at_formatted}</div>
+                                            </div>
+                                        </div>`);
 
-
-                                $(".display_praise_comments").append(praise_html)
                             })
                         }
                         if (highlight_data.critique_comments.length > 0){
                             $.map(highlight_data.critique_comments, function(item, index){
-                                var critique_html = "<div class=\"media\"> <img class=\"mr-3 single-user-name\" src='http://writerstalkadmin.com/public/storage/"+item.user.image+"' alt=\"Generic placeholder image\">\n" +
-                                    "                                                    <div class=\"media-body mt-1 text-left\">\n" +
-                                    "                                                        <h5 class=\"mt-0 main-name\">"+item.user.name+"</h5>\n" +
-                                    "                                                        <p class=\"review\">"+item.comment+"</p>\n" +
-                                    "                                                        <div class=\"time last-seen\">"+item.comment_created_at_formatted+"</div>\n" +
-                                    "                                                    </div>\n" +
-                                    "                                                </div>";
-
-
-                                $(".display_critique_comments").append(critique_html)
+                                $(".display_critique_comments").append(`
+                                        <div class="media"> <img class="mr-3 single-user-name" src="${item.user.image ? '{{asset("storage")}}'+'/' +item.user.image: '{{asset("assets/imgs/user_avatar.png")}}'}" alt="Generic placeholder image">
+                                            <div class="media-body mt-1 text-left">
+                                                <h5 class="mt-0 main-name">${item.user.name}</h5>
+                                                <p class="review">${item.comment}</p>
+                                                <div class="time last-seen">${item.comment_created_at_formatted}</div>
+                                            </div>
+                                        </div>`);
                             })
                         }
                     } else{
