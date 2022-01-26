@@ -106,11 +106,12 @@
             $('#writer_filtred').html("")
             $.map(writers_arr, function(item, index){
                 let writer_content = ``;
+                let showUrl = '{{ route("userProfile", ":uuid") }}'.replace(':uuid', item.uuid);
                 writer_content +=`
                 <div class="col-md-3 col-sm-4 pe-2 ps-2">
                         <div class="card border-0 shadow-xss rounded-3 mb-3">
                             <div class="card-body ps-3 pe-3 pb-4 text-center writers-container" >
-                                <a href="{{route('userProfile',['id'=>$u_row->uuid])}}">
+                                <a href="${showUrl}">
                                 <figure class="avatar ms-auto me-auto mb-0 ">
                                     <img src="${item.image ? '{{asset("storage")}}'+'/'+item.image: '{{asset("assets/imgs/user_avatar.png")}}'}" alt="image" class="h20 p-0 ml rounded-circle w65 shadow-xss"></figure>
                                 <div class="clearfix"></div>
